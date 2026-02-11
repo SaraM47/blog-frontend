@@ -16,7 +16,6 @@ export default function Admin() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -52,7 +51,6 @@ export default function Admin() {
   // Create or update post based on whether we're in editing mode
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     // Basic validation
