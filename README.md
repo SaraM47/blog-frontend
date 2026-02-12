@@ -1,73 +1,111 @@
-# React + TypeScript + Vite
+# Moment 3 - Single Page Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Detta projekt är en Single Page Application utvecklad med React och TypeScript. Applikationen kommunicerar med ett egenutvecklat backend-API som hanterar autentisering med JSON Web Tokens samt fullständig CRUD-funktionalitet för blogginlägg. Frontend är byggt med Vite och React och är publicerat på Netlify. Routing hanteras med React Router v6, vilket möjliggör navigering mellan olika vyer utan att sidan laddas om. Autentiseringstillstånd hanteras med React Context API. Kommunikation med backend sker via Fetch API och inkluderar credentials för att stödja HTTP-only cookies.
 
-Currently, two official plugins are available:
+Backend är implementerat med Fastify och använder MongoDB Atlas som databas via Mongoose är publicerat på Render. Autentisering sker med JSON Web Tokens som lagras i HTTP-only cookies. Skyddade endpoints valideras genom middleware innan åtkomst ges till administrativ funktionalitet.
+- Länk till Backend-API repo: [Backend-repo](https://github.com/SaraM47/blog-backend). 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Autentisering
 
-## React Compiler
+Autentisering implementeras med JWT som lagras i en HTTP-only cookie. När en användare loggar in via /auth/login genererar backend en signerad token som skickas tillbaka och lagras som cookie. Skyddade endpoints kräver en giltig token och valideras via middleware. Frontend kontrollerar användarens inloggningsstatus genom anrop till /auth/me. Användningen av HTTP-only cookies innebär att token inte är åtkomlig via JavaScript, vilket minskar risken för XSS-relaterade angrepp.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Funktionalitet
 
-## Expanding the ESLint configuration
+Publik del
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+* Lista alla inlägg
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+* Visa enskilt inlägg via dynamisk route (/posts/:id)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+* Sidorna fungerar utan inloggning
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Inloggning
+
+* JWT-baserad autentisering
+
+* Login-sida
+
+* Navigationsmeny uppdateras beroende på inloggningsstatus
+
+Administrativ del
+
+* Skapa inlägg
+
+* Uppdatera inlägg
+
+* Ta bort inlägg
+
+* Bekräftelsemodal vid borttagning
+
+* Toast-notifikationer vid CRUD-operationer
+
+## Backend-API
+
+Backend exponerar följande endpoints. Skyddade endpoints kräver en giltig JWT-cookie:
+
+Autentisering:
+
+* POST /auth/register
+
+* POST /auth/login
+
+* POST /auth/logout
+
+* GET /auth/me
+
+Inlägg:
+
+* GET /posts
+
+* GET /posts/:id
+
+* POST /posts
+
+* PUT /posts/:id
+
+* DELETE /posts/:id
+
+## Starta lokalt 
+Frontend:
+Steg 1: Navigera till mappen
+```bash
+cd blog-frontend
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Steg 2: Installera beroenden
+```bash
+npm install
+```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Steg 3: Starta utvecklingsservern
+```bash
+npm run dev
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Backend:
+
+Steg 1: Navigera till mappen
+
+```bash
+cd blog-backend
+```
+
+Steg 2: Installera beroenden
+```bash
+npm install
+```
+
+Steg 3: Skapa en .env-fil
+
+Lägg till följande variabler som beskrivs nedan:
+```bash
+PORT=...
+MONGO_URI=...
+JWT_SECRET=...
+CLIENT_ORIGIN=http://localhost:5173
+```
+
+Steg 4: Starta utvecklingsservern
+```bash
+npm run dev
 ```
