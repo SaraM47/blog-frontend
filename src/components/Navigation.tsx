@@ -20,11 +20,11 @@ export default function Navigation() {
     <header className="bg-(--primary)">
       <nav className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-2">
         <NavLink to="/" className={linkClass}>
-          Home
+          Hem
         </NavLink>
 
         <NavLink to="/posts" className={linkClass}>
-          Posts
+          Inlägg
         </NavLink>
 
         <div className="ml-auto flex items-center gap-3">
