@@ -39,7 +39,7 @@ export default function Login() {
         <p className="text-m mt-1">
           Använd dina admin-uppgifter för att hantera inlägg.
         </p>
-  
+
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div className="space-y-1">
             <label className="text-md font-medium" htmlFor="email">
@@ -50,15 +50,15 @@ export default function Login() {
               type="email"
               className={[
                 "w-full border border-(--border) bg-white px-3 py-2",
-                "focus-visible:ring-2 focus-visible:ring-(--ring) focus-visible:ring-offset-2"
+                "focus-visible:ring-2 focus-visible:ring-(--ring) focus-visible:ring-offset-2",
               ].join(" ")}
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
             />
           </div>
-  
+
           <div className="space-y-1">
             <label className="text-md font-medium" htmlFor="password">
               Lösenord
@@ -68,21 +68,21 @@ export default function Login() {
               type="password"
               className={[
                 "w-full border border-(--border) bg-white px-3 py-2",
-                "focus-visible:ring-2 focus-visible:ring-(--ring) focus-visible:ring-offset-2"
+                "focus-visible:ring-2 focus-visible:ring-(--ring) focus-visible:ring-offset-2",
               ].join(" ")}
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
             />
           </div>
-  
+
           {error && (
             <div className=" border border-red-200 bg-red-50 p-3 text-md text-red-700">
               {error}
             </div>
           )}
-  
+
           <button
             type="submit"
             disabled={loading}
@@ -90,12 +90,19 @@ export default function Login() {
               "w-48 px-4 py-2 font-semibold transition",
               "bg-(--primary) text-white hover:bg-(--primary-hover)",
               "disabled:opacity-60 disabled:cursor-not-allowed",
-              "focus-visible:ring-2 focus-visible:ring-(--ring) focus-visible:ring-offset-2"
+              "focus-visible:ring-2 focus-visible:ring-(--ring) focus-visible:ring-offset-2",
             ].join(" ")}
           >
             {loading ? "Loggar in..." : "Logga in"}
           </button>
         </form>
+
+        <p className="mt-4 text-sm">
+          Har du inget konto?{" "}
+          <a href="/register" className="underline">
+            Skapa konto
+          </a>
+        </p>
       </div>
     </main>
   );
