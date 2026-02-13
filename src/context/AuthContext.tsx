@@ -94,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{ user, isAuthenticated, isLoading, login, register, logout }}
     >
       {/* Prevent rendering children until auth check is completed */}
-      {!isLoading && children}
+      {children}
     </AuthContext.Provider>
   );
 }
