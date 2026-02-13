@@ -13,6 +13,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean; // added to prevent redirect flash during auth check
   login: (email: string, password: string) => Promise<boolean>;
+  register: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
 }
 
@@ -51,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function login(email: string, password: string) {
     const res = await apiFetch("/auth/login", {
       method: "POST",
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password }),
     });
 
     if (res.ok) {
@@ -62,10 +63,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return false;
   }
 
+  // Register a new user
+  async function register(email: string, password: string) {
+    const res = await apiFetch("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (res.ok) {
+      return true;
+    }
+
+    return false;
+  }
+
   // Logout function that tells the server to end the session and clears user state
   async function logout() {
     await apiFetch("/auth/logout", {
-      method: "POST"
+      method: "POST",
     });
     setUser(null);
   }
@@ -76,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, isLoading, login, logout }}
+      value={{ user, isAuthenticated, isLoading, login, register, logout }}
     >
       {/* Prevent rendering children until auth check is completed */}
       {!isLoading && children}
