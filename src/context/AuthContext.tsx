@@ -11,6 +11,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isLoading: boolean; // added to prevent redirect flash during auth check
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
 }
@@ -21,17 +22,25 @@ const AuthContext = createContext<AuthContextType | null>(null);
 // AuthProvider component that wraps the app and provides authentication state and functions
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // track initial auth check
 
   const isAuthenticated = !!user;
 
   // Fetch the current user from the server to check if they're logged in
   async function fetchMe() {
-    const res = await apiFetch("/auth/me");
-    if (res.ok) {
-      const data = await res.json();
-      setUser(data.user);
-    } else {
+    try {
+      const res = await apiFetch("/auth/me");
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user);
+      } else {
+        setUser(null);
+      }
+    } catch {
+      // Network errors or backend cold start handled gracefully
       setUser(null);
+    } finally {
+      setIsLoading(false); // auth check finished
     }
   }
 
@@ -43,20 +52,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (res.ok) {
-      await fetchMe();
+      await fetchMe(); // refresh user state after successful login
       return true;
     }
+
     return false;
   }
 
   // Logout function that tells the server to end the session and clears user state
   async function logout() {
     await apiFetch("/auth/logout", {
-        method: "POST",
-        body: JSON.stringify({})
-      });
-      setUser(null);
-    }
+      method: "POST"
+    });
+    setUser(null);
+  }
 
   useEffect(() => {
     fetchMe(); // start on app load to check if user is already logged in
@@ -64,9 +73,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, login, logout }}
+      value={{ user, isAuthenticated, isLoading, login, logout }}
     >
-      {children}
+      {/* Prevent rendering children until auth check is completed */}
+      {!isLoading && children}
     </AuthContext.Provider>
   );
 }
