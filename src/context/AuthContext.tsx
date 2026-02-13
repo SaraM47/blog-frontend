@@ -30,12 +30,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function fetchMe() {
     try {
       const res = await apiFetch("/auth/me");
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-      } else {
+
+      if (!res.ok) {
+        // 401 when not logged in is expected, will treat it as "not authenticated"
         setUser(null);
+        return;
       }
+
+      const data = await res.json();
+      setUser(data.user);
     } catch {
       // Network errors or backend cold start handled gracefully
       setUser(null);
